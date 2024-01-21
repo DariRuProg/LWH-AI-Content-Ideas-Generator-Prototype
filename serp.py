@@ -4,8 +4,9 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from selenium_stealth import stealth
 import math
+import json
 
-def search_google_web_automation(query, num_results):
+def search_google_web_automation(query, num_results, json_file_name='durchsuchte-webseiten.json'):
     # Enforce limits on num_results
     if num_results < 5:
         num_results = 5
@@ -23,7 +24,7 @@ def search_google_web_automation(query, num_results):
 
     stealth(
         driver,
-        languages=["en-US", "en"],
+        languages=["DE", "de"],
         vendor="Google Inc.",
         platform="Win32",
         webgl_vendor="Intel Inc.",
@@ -35,7 +36,7 @@ def search_google_web_automation(query, num_results):
     counter = 0
     for page in range(1, n_pages + 1):
         url = (
-            "http://www.google.com/search?q="
+            "http://www.google.de/search?q="
             + str(query)
             + "&start="
             + str((page - 1) * 10)
@@ -65,4 +66,9 @@ def search_google_web_automation(query, num_results):
             break
 
     driver.quit()
+
+    # Store results in the specified JSON file
+    with open(json_file_name, 'w', encoding='utf-8') as json_file:
+        json.dump(results, json_file, ensure_ascii=False, indent=4)
+
     return results

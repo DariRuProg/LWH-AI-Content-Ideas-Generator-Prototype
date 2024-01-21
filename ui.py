@@ -7,23 +7,45 @@ from typing import List
 from serp import search_google_web_automation
 from my_functions import get_article_from_url, generate_ideas
 
-
-prompt = "extract 5-10 content ideas from the [post], and return the list in json format, [post]: {post}"
+prompt = "we are in the german market - give all answers in german. Extract 5-7 content ideas from the [post], and return the list in json format, [post]: {post}"
 
 # Define the Ideas class
 class Ideas(BaseModel):
     ideas: List[str]
 
+# Function to load websites from JSON file
+def load_websites_from_json(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            websites_data = json.load(json_file)
+        return websites_data
+    except Exception as e:
+        st.error(f"Error loading websites data: {e}")
+        return []
+
 # Async function to process the main logic
 async def main(search_query, st):
     try:
-        search_results = search_google_web_automation(search_query, 10)
+        # Specify a unique JSON file name for each search query
+        json_file_name = f'{search_query.replace(" ", "_")}_search_results.json'
+
+        # Run the search process and store results in the specified JSON file
+        search_results = search_google_web_automation(search_query, 10, json_file_name)
+
         all_ideas = []
+
+        # Load websites data from JSON file
+        websites_data = load_websites_from_json(json_file_name)
+
+        # Display the URLs from the loaded data
+        st.write("Websites from which the Content-Ideas are taken:")
+        for website in websites_data:
+            st.write(website["url"])
 
         # Initialize progress bar
         progress_bar = st.progress(0)
         total_results = len(search_results)
-        
+
         for index, result in enumerate(search_results):
             try:
                 # Update progress bar
@@ -52,7 +74,7 @@ async def main(search_query, st):
     except Exception as e:
         st.error(f"Error fetching search results: {e}")
     finally:
-        # Ensure progress bar is filled when process is complete
+        # Ensure progress bar is filled when the process is complete
         progress_bar.progress(100)
 
 # Streamlit UI setup
