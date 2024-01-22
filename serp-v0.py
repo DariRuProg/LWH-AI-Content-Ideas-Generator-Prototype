@@ -5,16 +5,6 @@ from urllib.parse import urlparse
 from selenium_stealth import stealth
 import math
 import json
-import requests
-
-def extract_h_titles(url):
-    try:
-        soup_page = BeautifulSoup(requests.get(url).content, 'html.parser')
-        h_titles = [(element.name, element.text.strip()) for element in soup_page.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
-        return h_titles
-    except Exception as e:
-        print(f"Error extracting H titles from {url}: {e}")
-        return []
 
 def search_google_web_automation(query, num_results, json_file_name='durchsuchte-webseiten.json'):
     # Enforce limits on num_results
@@ -63,16 +53,12 @@ def search_google_web_automation(query, num_results, json_file_name='durchsuchte
             title = h.a.h3.text
             link = h.a.get("href")
             rank = counter
-            # Extract H-titles from the page
-            htitles = extract_h_titles(link)
-            
             results.append(
                 {
                     "title": title,
                     "url": link,
                     "domain": urlparse(link).netloc,
                     "rank": rank,
-                    "htitles": htitles
                 }
             )
 

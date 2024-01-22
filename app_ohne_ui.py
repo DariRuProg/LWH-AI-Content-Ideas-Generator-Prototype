@@ -11,7 +11,7 @@ search_query = "AI in marketing"  # The query to search for
 NUMBER_OF_RESULTS = 10  # Number of search results to process
 
 # Template for the prompt to be used later
-prompt = "extract 5-10 content ideas from the [post], and return the list in json format, [post]: {post}"
+prompt = "extract 3-4 content ideas from the [post], and return the list in json format, [post]: {post}"
 
 # Pydantic model for data validation
 class Ideas(BaseModel):

@@ -1,15 +1,14 @@
+# this function also extracts all titles from each url
+
 import newspaper
 import asyncio
 import openai
 from openai import AsyncOpenAI
 from openai import OpenAI
 from dotenv import load_dotenv
-from bs4 import BeautifulSoup
 import os
 import asyncio
 import time
-import requests
-
 
 # Load environment variables
 load_dotenv()
@@ -28,18 +27,6 @@ import instructor
 instructor.apatch(async_openai_client)
 
 
-def extract_h_titles(url):
-    try:
-        soup_page = BeautifulSoup(requests.get(url).content, 'html.parser')
-        h_titles = [(element.name, element.text.strip()) for element in soup_page.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
-        return h_titles
-    except Exception as e:
-        print(f"Error extracting H titles from {url}: {e}")
-        return []
-
-
-
-
 def get_article_from_url(url):
     try:
         # Scrape the web page for content using newspaper
@@ -49,9 +36,14 @@ def get_article_from_url(url):
         # Check if the download was successful before parsing the article
         if article.download_state == 2:
             article.parse()
+
             # Get the main text content of the article
             article_text = article.text
-            return article_text
+
+            # Get all titles (headings) from the article
+            headings = [element.text.strip() for element in article.doc.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
+
+            return {'text': article_text, 'headings': headings}
         else:
             print("Error: Unable to download article from URL:", url)
             return None
@@ -59,6 +51,7 @@ def get_article_from_url(url):
         print("An error occurred while processing the URL:", url)
         print(str(e))
         return None
+
 
 MAX_RETRIES = 3
 RETRY_DELAY = 2

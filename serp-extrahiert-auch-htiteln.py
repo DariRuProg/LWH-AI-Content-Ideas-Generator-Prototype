@@ -7,15 +7,6 @@ import math
 import json
 import requests
 
-def extract_h_titles(url):
-    try:
-        soup_page = BeautifulSoup(requests.get(url).content, 'html.parser')
-        h_titles = [(element.name, element.text.strip()) for element in soup_page.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
-        return h_titles
-    except Exception as e:
-        print(f"Error extracting H titles from {url}: {e}")
-        return []
-
 def search_google_web_automation(query, num_results, json_file_name='durchsuchte-webseiten.json'):
     # Enforce limits on num_results
     if num_results < 5:
@@ -55,24 +46,32 @@ def search_google_web_automation(query, num_results, json_file_name='durchsuchte
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, "html.parser")
         search = soup.find_all("div", class_="yuRUbf")
-
+        
         for h in search:
             if counter == num_results:
                 break
             counter += 1
-            title = h.a.h3.text
+            title_tag = h.a.find('h3')
+            title = title_tag.text if title_tag else ''
+
             link = h.a.get("href")
             rank = counter
-            # Extract H-titles from the page
-            htitles = extract_h_titles(link)
-            
+
+            # Extract titles (headings) from the page
+            try:
+                soup_page = BeautifulSoup(requests.get(link).content, 'html.parser')
+                titles = [element.text.strip() for element in soup_page.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
+            except Exception as e:
+                print(f"Error extracting titles from {link}: {e}")
+                titles = []
+
             results.append(
                 {
                     "title": title,
                     "url": link,
                     "domain": urlparse(link).netloc,
                     "rank": rank,
-                    "htitles": htitles
+                    "titles": titles
                 }
             )
 
