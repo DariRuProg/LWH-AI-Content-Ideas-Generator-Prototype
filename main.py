@@ -3,16 +3,16 @@ import json
 from pydantic import BaseModel
 from typing import List
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # Import der CORS-Middleware
+from fastapi.middleware.cors import CORSMiddleware
 from serp import search_google_web_automation
 from my_functions import get_article_from_url, generate_ideas
 
 app = FastAPI()
 
-# Konfiguration der CORS-Middleware, um Anfragen aus dem Frontend zu akzeptieren
+# Configuration of the CORS middleware to accept requests from the frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # "*": Erlaubt Anfragen von jedem Ursprung, Sie können dies einschränken
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -20,11 +20,11 @@ app.add_middleware(
 
 prompt = "we are in the german market - give all answers in german. Extract 3 - 5 content ideas from the [post], and return the list in JSON format, [post]: {post}"
 
-# Define die Klasse Ideas
+# Define the Ideas class
 class Ideas(BaseModel):
     ideas: List[str]
 
-# Async-Funktion zur Verarbeitung der Hauptlogik
+# Async function for the main logic
 @app.get("/blog/generate-titles")
 async def main(search_query: str):
     try:
@@ -64,9 +64,3 @@ async def main(search_query: str):
     except Exception as e:
         print(f"Error fetching search results: {e}")
         return {"error": f"Error fetching search results: {e}"}
-
-if __name__ == '__main__':
-    from os import environ
-    port = int(environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
-#serve(app, threads=1)
