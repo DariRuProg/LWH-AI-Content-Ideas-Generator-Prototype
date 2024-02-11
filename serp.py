@@ -82,7 +82,7 @@ def search_google_web_automation(query, num_results, json_file_name='durchsuchte
     driver.quit()
 
     # Store results in the specified JSON file
-    with open(json_file_name, 'w', encoding='utf-8') as json_file:
-        json.dump(results, json_file, ensure_ascii=False, indent=4)
+    #with open(json_file_name, 'w', encoding='utf-8') as json_file:
+    #    json.dump(results, json_file, ensure_ascii=False, indent=4)
 
     return results

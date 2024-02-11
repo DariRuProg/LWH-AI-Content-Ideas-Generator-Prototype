@@ -6,6 +6,8 @@ from typing import List
 from serp import search_google_web_automation
 from my_functions import get_article_from_url, generate_ideas
 
+
+# FastAPI app instance
 app = FastAPI()
 
 prompt = "we are in the german market - give all answers in german. Extract 3 - 5 content ideas from the [post], and return the list in JSON format, [post]: {post}"
@@ -21,6 +23,9 @@ async def main(search_query: str):
         search_results = search_google_web_automation(search_query, 10)
         all_ideas = []
 
+        # Initialize output_data
+        output_data = {"websites": [], "num_generated_ideas": 0, "generated_ideas": []}
+
         total_results = len(search_results)
 
         for index, result in enumerate(search_results):
@@ -34,6 +39,11 @@ async def main(search_query: str):
 
                     if ideas_object and ideas_object.ideas:
                         all_ideas.extend(ideas_object.ideas)
+
+                        # Add website information to output_data
+                        website_info = {"url": result["url"], "htitles": result.get("htitles", [])}
+                        output_data["websites"].append(website_info)
+                        
             except Exception as e:
                 print(f"Error processing search result {result}: {e}")
 
@@ -61,6 +71,7 @@ async def main(search_query: str):
     except Exception as e:
         print(f"Error fetching search results: {e}")
         return {"error": f"Error fetching search results: {e}"}
+
 
 #if __name__ == "__main__":
 #    import uvicorn
