@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Ideen-Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #1f1f1f;
+        }
+
+        h1 {
+            color: #ffffff;
+        }
+
+        p{
+            color: #ffffff;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .spinner-container {
+            display: none;
+            text-align: center;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0;
+            height: 20px;
+            background-color: #4caf50;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+        }
+
+        .results-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .expander {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .expander:hover {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Content Ideen-Generator</h1>
+    <p>Developed by DR</p>
+    <!-- User input field -->
+    <input type="text" id="searchQuery" placeholder="Suchanfrage eingeben">
+
+    <!-- Button to trigger the process -->
+    <button onclick="generateIdeas()">Generiere die Ideen</button>
+
+    <!-- Spinner container -->
+    <div class="spinner-container" id="spinnerContainer">
+        <p>Warten Sie auf die Magie!</p>
+    </div>
+
+    <!-- Progress bar container -->
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+    </div>
+
+    <!-- Results container -->
+    <div class="results-container" id="resultsContainer">
+        <p>Websites, von denen die Content-Ideen übernommen wurden:</p>
+        <div id="searchResults"></div>
+
+        <!-- Display generated ideas in an expander -->
+        <div class="expander" id="ideasExpander">
+            <p>Generierte Ideen anzeigen (JSON)</p>
+            <pre id="generatedIdeas"></pre>
+        </div>
+    </div>
+
+    <script>
+        async function generateIdeas() {
+            var searchQuery = document.getElementById('searchQuery').value;
+            showSpinner();
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/blog/generate-titles?search_query=${searchQuery}`);
+                const data = await response.json();
+
+                hideSpinner();
+                showProgress();
+
+                // Display search results
+                var searchResultsContainer = document.getElementById('searchResults');
+                searchResultsContainer.innerHTML = '';
+                data.websites.forEach(function (result) {
+                    var resultDiv = document.createElement('div');
+                    resultDiv.innerHTML = '<p>' + result.url + '</p>';
+                    var expanderDiv = document.createElement('div');
+                    expanderDiv.className = 'expander';
+                    expanderDiv.innerHTML = '<p>Siehe H-Titel für ' + result.url + '</p>';
+                    result.htitles.forEach(function (htitle) {
+                        expanderDiv.innerHTML += '<p>' + htitle + '</p>';
+                    });
+                    searchResultsContainer.appendChild(resultDiv);
+                    searchResultsContainer.appendChild(expanderDiv);
+                });
+
+                // Display generated ideas
+                var generatedIdeasContainer = document.getElementById('generatedIdeas');
+                generatedIdeasContainer.innerHTML = JSON.stringify(data.generated_ideas, null, 4);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                hideSpinner();
+            }
+        }
+
+        function showSpinner() {
+            document.getElementById('spinnerContainer').style.display = 'block';
+        }
+
+        function hideSpinner() {
+            document.getElementById('spinnerContainer').style.display = 'none';
+        }
+
+        function showProgress() {
+            document.getElementById('progressContainer').style.display = 'block';
+        }
+
+        function simulateProgress() {
+            var progress = 0;
+            var interval = setInterval(function () {
+                progress += 10;
+                document.getElementById('progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 200);
+        }
+    </script>
+</body>
+
+</html>
