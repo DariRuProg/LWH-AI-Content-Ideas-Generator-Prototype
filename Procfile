@@ -1,1 +1,1 @@
-web: waitress-serve --port=$PORT --call 'main:create_app'
+web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
