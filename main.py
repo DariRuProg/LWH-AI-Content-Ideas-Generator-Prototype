@@ -1,3 +1,4 @@
+import os
 import asyncio
 import json
 from pydantic import BaseModel
@@ -9,10 +10,10 @@ from my_functions import get_article_from_url, generate_ideas
 
 app = FastAPI()
 
-# Configuration of the CORS middleware to accept requests from the frontend
+# Configuration of CORS Middleware to accept requests from the frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # "*" allows requests from any origin; you can restrict this
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -64,3 +65,7 @@ async def main(search_query: str):
     except Exception as e:
         print(f"Error fetching search results: {e}")
         return {"error": f"Error fetching search results: {e}"}
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
