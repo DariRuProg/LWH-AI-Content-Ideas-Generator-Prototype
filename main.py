@@ -47,17 +47,17 @@ async def main(search_query: str):
             except Exception as e:
                 print(f"Error processing search result {result}: {e}")
 
-        # Display URLs and Titles
-        print("Websites, von denen die Content-Ideen übernommen wurden:")
-        for result in search_results:
-            print(result["url"])
+        # # Display URLs and Titles
+        # print("Websites, von denen die Content-Ideen übernommen wurden:")
+        # for result in search_results:
+        #     print(result["url"])
 
-            # Display H-Titles
-            for h_title in result.get("htitles", []):
-                print(f"{h_title}")
+        #     # Display H-Titles
+        #     for h_title in result.get("htitles", []):
+        #         print(f"{h_title}")
 
-        # Display the number of records
-        print(f"Anzahl der generierten Ideen: {len(all_ideas)}")
+        # # Display the number of records
+        # print(f"Anzahl der generierten Ideen: {len(all_ideas)}")
 
         # Return data in a more structured format
         response_data = {
