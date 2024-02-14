@@ -1,1 +1,1 @@
-web: uvicorn main:app --host=0.0.0.0 --port=${PORT:-5000}
+web: uvicorn main:app --host=0.0.0.0 --port=${PORT:-5000} --workers 1 --reload --limit-concurrency 4 --limit-max-requests 100 --proxy-headers --env-file .env --timeout-keep-alive 65 --timeout-websocket 65
