@@ -1,7 +1,8 @@
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+
 #from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
