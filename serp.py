@@ -1,6 +1,6 @@
 from selenium import webdriver
-#from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
+#from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from selenium_stealth import stealth
@@ -27,18 +27,18 @@ def search_google_web_automation(query, num_results, json_file_name='durchsuchte
     # Calculate the number of pages
     n_pages = math.ceil(num_results / 10)
 
-    firefox_options = Options()
-    firefox_options.headless = True
+    #firefox_options = Options()
+    #firefox_options.headless = True
 
 
-    #chrome_options = Options()
-    # chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--disable-gpu")
-    # chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    # chrome_options.add_experimental_option("useAutomationExtension", False)
-    # driver = webdriver.Chrome(options=chrome_options)
-    driver = webdriver.Firefox(options=firefox_options)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    driver = webdriver.Chrome(options=chrome_options)
+    #driver = webdriver.Firefox(options=firefox_options)
 
     stealth(
         driver,
